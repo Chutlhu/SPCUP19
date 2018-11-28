@@ -40,3 +40,4 @@ __Note__: MBSS Locate require the knownledge of the microphone array.
 ## References
 * DiBiase, J. H., _A High Accuracy, Low-Latency Technique for Talker Localization in Reverberant Environments using Microphone Arrays_, (Ph.D.). Brown Univ, 2000,
 * C. Blandin, A. Ozerov and E. Vincent, _Multi-source TDOA estimation in reverberant audio using angular spectra and clustering_, Signal Processing 92, pp. 1950-1960, 2012.
+* [MBSS Locate toolbox](http://bass-db.gforge.inria.fr/bss_locate/)
