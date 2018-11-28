@@ -1,3 +1,18 @@
+% main function for participants of the SPCUP19 challenge to 
+% load each recording and to run their algorithm.
+%
+% Inputs:  N/A (loads data from mat files specified by the
+%          variables in PATH)
+% Outputs: N/A (saves data to mat files)
+%
+% Authors: Diego Di Carlo
+%          Antoine Deleforge
+%
+% Notice:  This is a preliminary version as part of the SPCUP19 consultation
+%          pre-release. Please report problems and bugs to the author on the
+%          PIAZZA platform webpage or on the github page
+%
+
 close all
 clear
 clc
@@ -12,12 +27,12 @@ PATH_GT = PATH_DATA;
 % add MBSSLocate toolbox to the current matlab session
 addpath(genpath('./MBSSLocate/'));
 
-%% FLAGS
+%% FLAGs
 % if 'development' is 1, load the ground-truth files and
 % perform the evaluation
 development = 1;
 
-%% HARD CODED VARIBLES
+%% HARD CODED VARIBLEs
 %    coord:    x       y       z
 micPos = [  0.0615 -0.0420 -0.0410;  % mic 1
             0.0615  0.0420  0.0410;  % mic 2
@@ -28,7 +43,7 @@ micPos = [  0.0615 -0.0420 -0.0410;  % mic 1
            -0.0420 -0.0615 -0.0410;  % mic 7
             0.0420 -0.0615  0.0410]; % mic 8
 
-%% GROUND_TRUTH
+%% GROUND TRUTH
 if development
     % load groud-truth files
     file = load([PATH_GT 'SPCUP19_dev_' DATA '.mat']);
@@ -43,7 +58,7 @@ if development
 end
 
 
-%% BASELINES
+%% BASELINE
 
 % Signal parameters
 % -----------------
