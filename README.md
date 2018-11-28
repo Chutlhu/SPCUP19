@@ -1,5 +1,5 @@
 # Dregon
-Official repository of the SPCUP19: DREGON CHALLENGE
+Official code repository of the SPCUP19: DREGON CHALLENGE
 
 ## Usage
 1. Download or clone this repository;
