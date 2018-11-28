@@ -1,0 +1,23 @@
+Updates since version 1.3:
+ 
+- API updates :
+    - Sending parameters to the main function (MBSS_locate_spec.m) is done using MATLAB structures
+    - The main structure (sMBSSParam) is initialized using MBSS_InputParam2Struct.m with the user parameters
+- Add a support to moving arrays
+- Decrease allocated memory in the aggregation algorithm : allocated memory is no more impacted by the the number of microphone pairs used
+- Add a block processing approach to estimate the localization on a configurable analysis window (including block overlap)
+- Add a kind of Wiener filtering option to improve the localization of chosen source(s): not available for all spectral angular methods
+    - Usage of this feature has been tested on the voice-home 2 corpus in order to increase the speaker localization under noisy condition
+- Example updates :
+    - Example 1 : updated to use the new API
+    - Example 2 : New example to use MBSS on a voiceHome-2 corpus file
+    - Example 3 : (older example 2) updated to use the new API and demonstrate the block processing approach
+    - Example 4 : New example to use MBSS on a simulated moving source and microphones array
+- Add a time structure to evaluate the time spent in sub-functions
+- Add a support to locate at a fixed azimut or elevation (the peak search is done in 1D as bsslocate does)
+- Add a support to aggregate the paired angular spectrum over a range of chosen frequencies
+
+
+
+
+
