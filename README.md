@@ -19,7 +19,7 @@ After 3. point of the previous section, the folder should be organized as follow
     * `baseline.m`
     * dev_flight/
         * audio/
-        * `SPCUP19\_dev\_flight.mat`
+        * `SPCUP19_dev_flight.mat`
     * dev_static/
         * audio/
         * `SPCUP19\_dev\_static.mat`
