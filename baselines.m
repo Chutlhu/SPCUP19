@@ -43,13 +43,29 @@ micPos = [  0.0615 -0.0420 -0.0410;  % mic 1
            -0.0420 -0.0615 -0.0410;  % mic 7
             0.0420 -0.0615  0.0410]; % mic 8
 
+
 %% GROUND TRUTH
+% mat files are:
+%   - SPCUP19_dev_flight.mat, containing:
+%       - broadband_azimuth
+%       - broadband_elevation
+%   - SPCUP19_dev_static.mat, containing:
+%       - static_azimuth
+%       - static_elevation
+% Thus an additional variabile, 'data_specification', is used
+if strcmp(DATA, 'flight')
+    data_specification = 'broadband';
+end
+if strcmp(DATA, 'static')
+    data_specification = 'static';
+end
+    
 if development
     % load groud-truth files
     file = load([PATH_GT 'SPCUP19_dev_' DATA '.mat']);
     
-    eval(['gt_azimuth = file.' DATA '_azimuth;'])
-    eval(['gt_elevation = file.' DATA '_elevation;'])
+    eval(['gt_azimuth = file.' data_specification '_azimuth;'])
+    eval(['gt_elevation = file.' data_specification '_elevation;'])
     
     [J, T] = size(gt_azimuth); % J audio files x T frames
     
@@ -227,9 +243,9 @@ if ~all(size(azPred) == [J T] & size(elPred) == [J T])
     error('Dimensions do not match the required ones. They must be (N_files x N_frames)')
 end
 
-eval([DATA '_azimuth = azPred;'])
-eval([DATA '_elevation = elPred;'])
+eval([data_specification '_azimuth = azPred;'])
+eval([data_specification '_elevation = elPred;'])
 
-save(['./SPCUP19_' DATA '.mat'], [DATA '_azimuth'], [DATA '_elevation']);
+save(['./SPCUP19_' DATA '.mat'], [data_specification '_azimuth'], [data_specification '_elevation']);
 
 fprintf('done.\n')
