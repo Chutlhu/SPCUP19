@@ -33,16 +33,15 @@ addpath(genpath('./MBSSLocate/'));
 development = 1;
 
 %% HARD CODED VARIBLEs
-%    coord:    x       y       z
-micPos = [  0.0615 -0.0420 -0.0410;  % mic 1
-            0.0615  0.0420  0.0410;  % mic 2
-            0.0420  0.0615 -0.0410;  % mic 3
-           -0.0420  0.0615  0.0410;  % mic 4
-           -0.0615  0.0420 -0.0410;  % mic 5
-           -0.0615 -0.0420  0.0410;  % mic 6
-           -0.0420 -0.0615 -0.0410;  % mic 7
-            0.0420 -0.0615  0.0410]; % mic 8
-
+%    coord:    x         y         z
+micPos = [  0.0420    0.0615   -0.0410;  % mic 1
+           -0.0420    0.0615    0.0410;  % mic 2
+           -0.0615    0.0420   -0.0410;  % mic 3
+           -0.0615   -0.0420    0.0410;  % mic 4
+           -0.0420   -0.0615   -0.0410;  % mic 5
+            0.0420   -0.0615    0.0410;  % mic 6
+            0.0615   -0.0420   -0.0410;  % mic 7
+            0.0615    0.0420    0.0410]; % mic 8
 
 %% GROUND TRUTH
 % mat files are:
@@ -96,15 +95,7 @@ end
 % ----------------------
 
 % array parameters
-alpha = 0;
-if strcmp(DATA, 'flight')
-    alpha = 180;
-end
-% rotation matrix to change coordinate references
-Rz = [  cosd(alpha) -sind(alpha) 0;
-        sind(alpha)  cosd(alpha) 0;
-                 0            0  1];
-micPos = Rz*micPos';  % apply rotation matrix to coordinates
+micPos = micPos';     % transpose
 isArrayMoving   = 0;  % The microphone array is not moving
 subArray        = []; % []: all microphones are used
 sceneTimeStamps = []; % Both array and sources are statics => no time stamps
@@ -176,7 +167,7 @@ for j = 1:J
         
         % Run the localization method
         % here you should write your own code
-        [azEst, elEst, block_timestamps,elaps_time] = ...
+        [azEst, elEst, ~, ~] = ...
             MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
         
         % Printing for the development
