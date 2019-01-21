@@ -6,6 +6,7 @@ Official code repository of the SPCUP19: DREGON CHALLENGE
 2.  Download the development data (`dev_flight.mat` and `dev_static.mat`) from the [resources page](https://piazza.com/ieee_sps/other/spcup2019/resources) on the PIAZZA platform;
 3. Unzip the content of the zip files into the code's folder (see next section);
 4. Run the main file `baseline.m` in MATLAB.
+5. (optional) Run the file `plot_structure` in MATLAB to visualize the structures of the microphone array and drone.
 
 __Note__: baseline.m features hard-coded path for UNIX-like system. For Windows system, a modification of this variables in needed.
 __Note__: the baseline code has been tested on MATLAB R2017a.
@@ -17,6 +18,7 @@ After 3. point of the previous section, the folder should be organized as follow
         * ...
         * ... files and folders of [MBSS Locate](http://bass-db.gforge.inria.fr/bss_locate/) MATLAB toolbox
     * `baseline.m`
+    * `plot_structure.m`
     * dev_flight/
         * audio/
         * `SPCUP19_dev_flight.mat`
