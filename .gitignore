@@ -36,3 +36,4 @@ octave-workspace
 ### WAV AND HARDCODED FILES
 *.mat
 *.wav
+*.zip
