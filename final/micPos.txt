@@ -1,0 +1,11 @@
+% The (X,Y,Z) positions of the 8 microphones, in meters, 
+% with respect to the center of the array are given below:
+
+micPos = [ 0.0615 -0.0420 -0.0410;  % mic 1
+           0.0615  0.0420  0.0410;  % mic 2
+           0.0420  0.0615 -0.0410;  % mic 3
+          -0.0420  0.0615  0.0410;  % mic 4
+          -0.0615  0.0420 -0.0410;  % mic 5
+          -0.0615 -0.0420  0.0410;  % mic 6
+          -0.0420 -0.0615 -0.0410;  % mic 7
+           0.0420 -0.0615  0.0410]; % mic 8

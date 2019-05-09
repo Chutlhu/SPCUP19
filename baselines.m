@@ -1,4 +1,4 @@
-% main function for participants of the SPCUP19 challenge to 
+% main function for participants of the SPCUP19 challenge to
 % load each recording and to run their algorithm.
 %
 % Inputs:  N/A (loads data from mat files specified by the
@@ -17,59 +17,69 @@ close all
 clear
 clc
 
+
+%% DEBUG with EASY DATA
+try_with_easy_data = 1;
+if try_with_easy_data
+    suff = 'e' ;
+else
+    suff = '';
+end
+
+%% METHOD NAME
+METHOD_OR_TEAM = [suff 'baseline']; % write here your team/submission name. Please use only one word
+
+
 %% PATHs
-DATA = 'flight'; % static or flight
-PATH_DATA = ['./dev_' DATA '/'];
+PATH_DATA = [suff 'final/']; % 'challenge
+TASK = 'flight';
+PATH_AUDIO = [PATH_DATA TASK '_task/audio/'];
+PATH_RESULTS = 'results/';
 
-PATH_AUDIO = [PATH_DATA 'audio/'];
-PATH_GT = PATH_DATA;
-
+%% EXTERNALS
 % add MBSSLocate toolbox to the current matlab session
 addpath(genpath('./MBSSLocate/'));
 
-%% FLAGs
+%% GROUND-TRUTH and DEVELOPMENT
 % if 'development' is 1, load the ground-truth files and
 % perform the evaluation
 development = 1;
+PATH_GT = ['./../' suff 'final_ground_truth/'];
+tollerance = 10;
+
 
 %% HARD CODED VARIBLEs
 %    coord:    x         y         z
 micPos = [  0.0420    0.0615   -0.0410;  % mic 1
-           -0.0420    0.0615    0.0410;  % mic 2
-           -0.0615    0.0420   -0.0410;  % mic 3
-           -0.0615   -0.0420    0.0410;  % mic 4
-           -0.0420   -0.0615   -0.0410;  % mic 5
-            0.0420   -0.0615    0.0410;  % mic 6
-            0.0615   -0.0420   -0.0410;  % mic 7
-            0.0615    0.0420    0.0410]; % mic 8
+    -0.0420    0.0615    0.0410;  % mic 2
+    -0.0615    0.0420   -0.0410;  % mic 3
+    -0.0615   -0.0420    0.0410;  % mic 4
+    -0.0420   -0.0615   -0.0410;  % mic 5
+    0.0420   -0.0615    0.0410;  % mic 6
+    0.0615   -0.0420   -0.0410;  % mic 7
+    0.0615    0.0420    0.0410]; % mic 8
 
 %% GROUND TRUTH
-% mat files are:
-%   - SPCUP19_dev_flight.mat, containing:
-%       - broadband_azimuth
-%       - broadband_elevation
-%   - SPCUP19_dev_static.mat, containing:
-%       - static_azimuth
-%       - static_elevation
-% Thus an additional variabile, 'data_specification', is used
-if strcmp(DATA, 'flight')
-    data_specification = 'broadband';
+if contains(TASK, 'flight')
+    offset = 90;
 end
-if strcmp(DATA, 'static')
-    data_specification = 'static';
+if contains(TASK, 'static')
+    offset = -90;
 end
-    
+
 if development
     % load groud-truth files
-    file = load([PATH_GT 'SPCUP19_dev_' DATA '.mat']);
+    load([PATH_GT TASK '_task/' TASK '_azimuth.mat']);
+    load([PATH_GT TASK '_task/' TASK '_elevation.mat']);
     
-    eval(['gt_azimuth = file.' data_specification '_azimuth;'])
-    eval(['gt_elevation = file.' data_specification '_elevation;'])
-    
-    [J, T] = size(gt_azimuth); % J audio files x T frames
-    
-    azRef = gt_azimuth;   % azimuth reference
-    elRef = gt_elevation; % elevation refernce
+    if strcmp(TASK,'flight')
+        azRef = flight_azimuth;   % azimuth reference
+        elRef = flight_elevation; % elevation refernce
+    elseif strcmp(TASK,'static')
+        azRef = static_azimuth;   % azimuth reference
+        elRef = static_elevation; % elevation refernce
+    end
+    [J, T] = size(azRef); % J audio files x T frames
 end
 
 
@@ -78,16 +88,18 @@ end
 % Signal parameters
 % -----------------
 
-% Sampling frequency for the algorithm. It can be changed and 
+% Sampling frequency for the algorithm. It can be changed and
 % resampling is performed later
-fs = 44100; 
+fs = 44100;
 % if the flight data, than process the signal frame-wise
-if strcmp(DATA, 'flight')
+if strcmp(TASK, 'flight')
     frame_size = 0.500; % 500 [ms] - !hardcode; see Challenge's syllabus
     frame_hop  = 0.250; % 250 [ms] - !hardcode; see Challenge's syllabus
+    T = 80;
 else
     frame_size = 4; % 4 [s]        - !hardcode; see Challenge's syllabus
     frame_hop  = 0; % no hop size  - !hardcode; see Challenge's syllabus
+    T = 1;          % only one frame
 end
 
 
@@ -99,8 +111,8 @@ micPos = micPos';     % transpose
 isArrayMoving   = 0;  % The microphone array is not moving
 subArray        = []; % []: all microphones are used
 sceneTimeStamps = []; % Both array and sources are statics => no time stamps
-                      % in the this code, the process is done frame-wise, 
-                      % thus MBSSLocate's tracking function is Sdisabled
+% in the this code, the process is done frame-wise,
+% thus MBSSLocate's tracking function is Sdisabled
 
 % localization method
 angularSpectrumMeth        = 'GCC-PHAT'; % Local angular spectrum method {'GCC-PHAT' 'GCC-NONLIN' 'MVDR' 'MVDRW' 'DS' 'DSW' 'DNM'}
@@ -108,7 +120,7 @@ pooling                    = 'max';      % Pooling method {'max' 'sum'}
 applySpecInstNormalization = 0;          % 1: Normalize instantaneous local angular spectra - 0: No normalization
 % Search space
 azBound                    = [-179 180]; % Azimuth search boundaries ((degree))
-elBound                    = [-90   10]; % Elevation search boundaries ((degree))
+elBound                    = [-90   90]; % Elevation search boundaries ((degree))
 gridRes                    = 1;          % Resolution (degree) of the global 3D reference system {azimuth,elevation}
 alphaRes                   = 5;          % Resolution (degree) of the 2D reference system defined for each microphone pair
 % Multiple sources parameters
@@ -136,6 +148,8 @@ sMBSSParam = MBSS_InputParam2Struct(angularSpectrumMeth,speedOfSound,fftSize_sec
 
 %% FILE-WISE and FRAME-WISE PROCESSING
 % variable allocation
+J = length(dir([PATH_AUDIO '*.wav']));
+
 azPred = zeros(J, T);
 elPred = zeros(J, T);
 
@@ -143,7 +157,7 @@ for j = 1:J
     
     fprintf('Processing audio sample %02i/%02i:\n',j,J)
     
-    % Load audio filename    
+    % Load audio filename
     [wavforms,fs_wav] = audioread([PATH_AUDIO num2str(j) '.wav']);
     % resampling to the given sampling frequency
     [p,q] = rat(fs/fs_wav,0.0001);
@@ -172,10 +186,10 @@ for j = 1:J
         
         % Printing for the development
         if development
-            azPred(j,t) = azEst;
-            fprintf('%1.2f %1.2f\n',azRef(j,t), azPred(j,t));
+            azPred(j,t) = azEst + offset;
+            fprintf('Ground-truth:  %1.2f %1.2f\n',azRef(j,t),elRef(j,t));
             elPred(j,t) = elEst;
-            fprintf('%1.2f %1.2f\n\n',elRef(j,t), elPred(j,t));
+            fprintf('->Estimation:  %1.2f %1.2f\n\n',azPred(j,t), elPred(j,t));
         end
         
     end
@@ -187,43 +201,62 @@ end
 
 %% TRAJECTORIES
 % plot predicted and ground truth drone trajectories
-figure(1)
-c = parula(J);
-
 if development
+    
+    figure(1)
+    if J == 1
+        c = ['b'];
+    else
+        c = parula(J);
+    end
+    
     for j = 1:J
-        if strcmp(DATA, 'flight')
-            plot( azRef(j,:), elRef(j,:),'--','color',c(j,:))
+        if strcmp(TASK, 'flight')
+            plot(azRef(j,:),   elRef(j,:), '--', 'color', c(j,:))
+            text(azRef(j,8)+3, elRef(j,8)-3, num2str(j))
             hold on
             plot(azPred(j,:), elPred(j,:),'-','color',c(j,:))
             text(azPred(j,8)+3, elPred(j,8)-3, num2str(j))
             title('Ground truth and estimated trajectories')
         else
             scatter( azRef(j), elRef(j),'b','o')
+            text( azRef(j)+3, elRef(j)-3, num2str(j))
             hold on
             scatter(azPred(j), elPred(j),'r','x')
             text(azPred(j)+5, elPred(j)-5, num2str(j))
             title('Ground truth and estimated points')
         end
-        xlim([-179 180])
-        ylim([-90 0])
+        xlim(azBound)
+        ylim(elBound)
         xlabel('Azimuth [degree]')
         ylabel('Elevation [degree]')
     end
 end
-fprintf('Press any key to continue...\n')
-pause
-close all
-    
+% fprintf('Press any key to continue...\n')
+% pause
+% close all
+
 %% EVALUATION
 if development == 1
     
     %%% dregon challeng metric
-    dregon_score  = @(pred, ref) sum(abs(pred-ref)<10,1)/size(ref,1);
+    circ_d = @(pred, ref) acosd(cosd(pred-ref));
+    gcirc_d = @(az_pred, az_ref, el_pred, el_ref) ...
+        great_circ_dist(1, az_pred, az_ref, el_pred, el_ref);
+    
+    dregon_score = @(az_pred, az_ref, el_pred, el_ref) ...
+        sum(sum(gcirc_d(az_pred, az_ref, el_pred, el_ref) <= tollerance));
+    
+    dregon_rmse   = @(pred, ref) sqrt(mean(circ_d(pred,ref).^2));
     
     %%% compute metric
-    azimuth_acc   = dregon_score(azPred, azRef);
-    elevation_acc = dregon_score(elPred, elRef);
+    acc   = dregon_score(azPred, azRef, elPred, elRef);
+    errAz = dregon_rmse(azPred, azRef);
+    errEl = dregon_rmse(elPred, elRef);
+    
+    fprintf('Dregon Score: %d\n',acc);
+    fprintf(' -- RMSE Az.: %1.2f\n',errAz);
+    fprintf(' -- RMSE El.: %1.2f\n',errEl);
 end
 
 %% PREPARE DATA FOR SUBMISSION
@@ -234,9 +267,11 @@ if ~all(size(azPred) == [J T] & size(elPred) == [J T])
     error('Dimensions do not match the required ones. They must be (N_files x N_frames)')
 end
 
-eval([data_specification '_azimuth = azPred;'])
-eval([data_specification '_elevation = elPred;'])
+azimuth = azPred;
+elevation = elPred;
 
-save(['./SPCUP19_' DATA '.mat'], [data_specification '_azimuth'], [data_specification '_elevation']);
+mkdir(PATH_RESULTS)
+save(['./' PATH_RESULTS 'SPCUP19FINAL_' METHOD_OR_TEAM '_' TASK '.mat'], ...
+    'azimuth', 'elevation');
 
 fprintf('done.\n')
