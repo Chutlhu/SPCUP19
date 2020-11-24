@@ -3,7 +3,7 @@ Official code repository of the SPCUP19: DREGON CHALLENGE
 
 ## Usage
 1. Download or clone this repository;
-2.  Download the development data (`dev_flight.mat` and `dev_static.mat`) from the [resources page](https://piazza.com/ieee_sps/other/spcup2019/resources) on the PIAZZA platform;
+2.  Download the development data (`dev_flight.mat` and `dev_static.mat`) from the [SP CUp19 page](http://dregon.inria.fr/datasets/signal-processing-cup-2019/) on the Dregon Dataset webpage;
 3. Unzip the content of the zip files into the code's folder (see next section);
 4. Run the main file `baseline.m` in MATLAB.
 5. (optional) Run the file `plot_structure` in MATLAB to visualize the structures of the microphone array and drone.
